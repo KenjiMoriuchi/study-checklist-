@@ -202,9 +202,9 @@
         
         <div class="controls">
             <button onclick="exportToCSV()" class="export-btn">CSVエクスポート</button>
-            <button onclick="clearAll()" class="clear-btn">全てクリア</button>
-            <button onclick="fillSampleData()">項目を読み込む</button>
-            <button onclick="markTodayAll()">全て今日の日付</button>
+            <button onclick="clearAll()" class="clear-btn">メモ・日付をクリア</button>
+            <button onclick="fillSampleData()">サンプルメモを入力</button>
+            <button onclick="markTodayAll()">完了項目を今日の日付に</button>
         </div>
         
         <div class="table-container">
@@ -213,7 +213,7 @@
                     <tr>
                         <th class="number-col">番号</th>
                         <th class="item-col">項目</th>
-                        <th class="content-col">内容</th>
+                        <th class="content-col">メモ</th>
                         <th class="date-col">チェック日付</th>
                     </tr>
                 </thead>
@@ -228,10 +228,43 @@
         
         // 初期化
         function initializeData() {
+            const items = [
+                'まずは行動を起こす',
+                'まず自分で考える',
+                '言い訳が合格を遠ざける',
+                '成功者の足跡を辿れ 〜成功の鍵は独創より模倣にあり',
+                '逆算で考える',
+                'やることを決めてから勉強する',
+                '今日やれることは今日終わらせる',
+                '成績が上がる方程式を理解する',
+                '「過去問はまだ早い」は間違い',
+                '量が質を向上させる',
+                '教材は一点集中し完璧になるまで学習せよ',
+                '理解したら練習して自分のものにする',
+                '受験はパターン攻略ゲーム！',
+                '維持するために努力をする',
+                '習慣は努力を不要にする',
+                'テストの日まで頑張り続ける',
+                'ブレークポイントを迎えるまであきらめずに努力を続けよ',
+                'まず解答解説を読む',
+                '間違いの原因を考え復習する',
+                '人に聞くのは最後の手段。そして聞く時は効果的な聞き方をする',
+                '記憶に頼るな、記録に頼れ',
+                '潜在意識の力 - あなたの可能性を広げる鍵',
+                '無理だBOXを壊す～メンタルブロック解除法～',
+                'すでに合格しているイメージを持て',
+                '運のぶれを吸収して合格を掴む！',
+                '海馬を味方につける。脳が忘れにくい３つのパターン',
+                '小さな成功体験を積み重ねよ',
+                '短期的な結果に一喜一憂しない',
+                '勉強を好きになりすぎない～依存ではなく成長の原動力にする～',
+                '合格したければ８割は守れ'
+            ];
+            
             for (let i = 1; i <= 30; i++) {
                 data.push({
                     number: i,
-                    item: '',
+                    item: items[i-1],
                     content: '',
                     date: ''
                 });
@@ -250,13 +283,11 @@
                 tr.innerHTML = `
                     <td class="number-col">${row.number}</td>
                     <td class="item-col">
-                        <input type="text" value="${row.item}" 
-                               onchange="updateData(${row.number - 1}, 'item', this.value)"
-                               placeholder="項目名を入力">
+                        <span>${row.item}</span>
                     </td>
                     <td class="content-col">
                         <textarea onchange="updateData(${row.number - 1}, 'content', this.value)"
-                                  placeholder="内容・詳細を入力">${row.content}</textarea>
+                                  placeholder="メモを入力">${row.content}</textarea>
                     </td>
                     <td class="date-col">
                         <input type="date" value="${row.date}"
@@ -281,7 +312,7 @@
         
         // CSVエクスポート
         function exportToCSV() {
-            const headers = ['番号', '項目', '内容', 'チェック日付'];
+            const headers = ['番号', '項目', 'メモ', 'チェック日付'];
             const csvContent = [
                 headers.join(','),
                 ...data.map(row => [
@@ -304,9 +335,8 @@
         
         // 全てクリア
         function clearAll() {
-            if (confirm('全てのデータをクリアしますか？')) {
+            if (confirm('メモと日付をクリアしますか？')) {
                 data.forEach(row => {
-                    row.item = '';
                     row.content = '';
                     row.date = '';
                 });
@@ -317,43 +347,17 @@
         
         // サンプルデータ
         function fillSampleData() {
-            const samples = [
-                { item: 'まずは行動を起こす' },
-                { item: 'まず自分で考える' },
-                { item: '言い訳が合格を遠ざける' },
-                { item: '成功者の足跡を辿れ 〜成功の鍵は独創より模倣にあり' },
-                { item: '逆算で考える' },
-                { item: 'やることを決めてから勉強する' },
-                { item: '今日やれることは今日終わらせる' },
-                { item: '成績が上がる方程式を理解する' },
-                { item: '「過去問はまだ早い」は間違い' },
-                { item: '量が質を向上させる' },
-                { item: '教材は一点集中し完璧になるまで学習せよ' },
-                { item: '理解したら練習して自分のものにする' },
-                { item: '受験はパターン攻略ゲーム！' },
-                { item: '維持するために努力をする' },
-                { item: '習慣は努力を不要にする' },
-                { item: 'テストの日まで頑張り続ける' },
-                { item: 'ブレークポイントを迎えるまであきらめずに努力を続けよ' },
-                { item: 'まず解答解説を読む' },
-                { item: '間違いの原因を考え復習する' },
-                { item: '人に聞くのは最後の手段。そして聞く時は効果的な聞き方をする' },
-                { item: '記憶に頼るな、記録に頼れ' },
-                { item: '潜在意識の力 - あなたの可能性を広げる鍵' },
-                { item: '無理だBOXを壊す～メンタルブロック解除法～' },
-                { item: 'すでに合格しているイメージを持て' },
-                { item: '運のぶれを吸収して合格を掴む！' },
-                { item: '海馬を味方につける。脳が忘れにくい３つのパターン' },
-                { item: '小さな成功体験を積み重ねよ' },
-                { item: '短期的な結果に一喜一憂しない' },
-                { item: '勉強を好きになりすぎない～依存ではなく成長の原動力にする～' },
-                { item: '合格したければ８割は守れ' }
+            const sampleMemos = [
+                '具体的な行動計画を立てた',
+                '分からない問題も自分なりに考えてみた',
+                '言い訳せずに素直に取り組んだ',
+                '成功者の勉強方法を参考にした',
+                '目標から逆算してスケジュールを組んだ'
             ];
             
-            samples.forEach((sample, index) => {
+            sampleMemos.forEach((memo, index) => {
                 if (index < data.length) {
-                    data[index].item = sample.item;
-                    data[index].content = '';
+                    data[index].content = memo;
                 }
             });
             
@@ -364,7 +368,7 @@
         function markTodayAll() {
             const today = new Date().toISOString().split('T')[0];
             data.forEach(row => {
-                if (row.item.trim() !== '') {
+                if (row.content.trim() !== '' || row.date !== '') {
                     row.date = today;
                 }
             });
